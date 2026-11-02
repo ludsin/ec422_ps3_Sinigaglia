@@ -1,0 +1,44 @@
+---
+title: "Problem Set 3"
+author: "Ludovico Sinigaglia"
+date: today
+format:
+  html:
+    toc: true
+    embed-resources: true
+execute:
+  warning: false
+  message: false
+---
+
+**GitHub repo:** <https://github.com/ludsin/ec422_ps3_Sinigaglia>
+
+## Time and Tsibbles
+
+**U.S. Retail Sales (`retail_ts`)**
+
+For the first dataset, I used U.S. retail sales data from FRED, originally collected by the U.S. Census Bureau. The data are monthly and include two versions of retail sales: one that is seasonally adjusted (RSAFS) and one that is not (RSAFSNA). Both are measured in millions of dollars. The index is `Month`, which keeps track of time, while the key is `series_id`, which allows R to tell the two series apart.
+
+**Canadian Natural Gas Production (`can_gas`)**
+
+For the second dataset, I used Canadian natural gas production data from the `fpp3` package in R. It shows monthly gas production from January 1960 to February 2005, measured in billions of cubic meters. Like the retail sales dataset, it uses `Month` as its time index. However, it doesn't need a key because it only contains one series.
+
+### 2.2a
+
+When I first imported the retail sales data into R, I noticed that the `observation_date` column was already recognized as a date (`<date>`) rather than text (`<chr>`) and this means R correctly understood the date format, so I didn't need to convert it manually.
+
+### 2.6b 
+
+By looking at the monthly averages since 1990 I found that December has the highest natural gas production at around 17.1 billion cubic meters, while June has the lowest at around 14.9 billion. This suggests that gas production follows a seasonal pattern with higher levels during the colder months and lower levels in summer.
+
+### 2.6d 
+
+I used `sum()` instead of `mean()` because I wanted to calculate the total gas production for each quarter rather than the average monthly production. By adding the three months together, I can see how much gas was produced during the whole quarter. Also looking at the graph, I can still see a seasonal pattern, with peaks and drops that repeat over time and this shows that seasonality is still present even when I change the data from monthly to quarterly.
+
+### 2.7b 
+
+Looking at the graph, I can see that the non-seasonally adjusted series has regular spikes and drops that repeat every year, especially around the holiday season. The seasonally adjusted series is much smoother because these seasonal changes have been removed. However, both lines follow almost the same long-term trend and show similar larger changes (including the drops) and this tells us that seasonal adjustment mainly removes the repeating yearly patterns without changing the overall direction of retail sales.
+
+### 2.7d 
+
+Here I added a blue smooth trend line using `geom_smooth()` because it makes it easier to see how gas production changed over time
