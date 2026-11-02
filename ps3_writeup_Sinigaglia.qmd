@@ -23,6 +23,8 @@ For the first dataset, I used U.S. retail sales data from FRED, originally colle
 
 For the second dataset, I used Canadian natural gas production data from the `fpp3` package in R. It shows monthly gas production from January 1960 to February 2005, measured in billions of cubic meters. Like the retail sales dataset, it uses `Month` as its time index. However, it doesn't need a key because it only contains one series.
 
+### Description of the Datasets
+
 ### 2.2a
 
 When I first imported the retail sales data into R, I noticed that the `observation_date` column was already recognized as a date (`<date>`) rather than text (`<chr>`) and this means R correctly understood the date format, so I didn't need to convert it manually.
@@ -42,3 +44,25 @@ Looking at the graph, I can see that the non-seasonally adjusted series has regu
 ### 2.7d 
 
 Here I added a blue smooth trend line using `geom_smooth()` because it makes it easier to see how gas production changed over time
+
+### Transformations
+
+### 3.1a 
+
+In the graph I noticed that the seasonal ups and downs generally become larger as gas production increases, especially during the 1970s and 1980s., but this doesn't happen throughout the entire period. Towards the end, production keeps increasing, but the seasonal changes don't grow as much as before.
+
+### 3.1b 
+
+After taking the log of gas production, I see that the trend becomes flatter and the seasonal ups and downs look more balanced, especially when production is higher. However, seasonal changes are still visible and their size is not completely constant over time. I think using logs is helpful because it makes the changes easier to compare, even though it doesn't completely remove the differences in seasonal fluctuations.
+
+### 3.1c
+
+By looking at the two graphs we know that retail sales keep increasing over time, and the seasonal ups and downs become larger as sales grow. After taking the log, the trend looks more linear and the seasonal changes become more balanced. Here I think using logs makes even more sense for retail sales than for Canadian gas production because the seasonal fluctuations seem to grow more consistently with the level of sales.
+
+### 3.2a 
+
+The difference between the two methods is usually very small and close to zero. There are some larger spikes, especially in the earlier years, but overall I think the log difference is a good approximation of the actual growth rate, particularly when monthly changes are small.
+
+### 3.3 
+
+The non-seasonally adjusted series has much larger monthly changes, while the adjusted series stays closer to zero most of the time. This happens because seasonal adjustment removes regular changes in spending throughout the year, such as holiday shopping. As I also pointed out earlier in Part 2.7b, removing these patterns makes the data smoother and helps me see the actual changes in retail sales more clearly.
