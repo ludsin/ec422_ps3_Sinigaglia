@@ -27,11 +27,11 @@ For the second dataset, I used Canadian natural gas production data from the `fp
 
 ### 2.2a
 
-When I first imported the retail sales data into R, I noticed that the `observation_date` column was already recognized as a date (`<date>`) rather than text (`<chr>`) and this means R correctly understood the date format, so I didn't need to convert it manually.
+When I first imported the retail sales data into R, I noticed that the `observation_date` column was already recognized as a date (`<date>`) rather than text (`<chr>`) and this means R correctly understood the date format, so I didn't need to convert it manually
 
 ### 2.6b 
 
-By looking at the monthly averages since 1990 I found that December has the highest natural gas production at around 17.1 billion cubic meters, while June has the lowest at around 14.9 billion. This suggests that gas production follows a seasonal pattern with higher levels during the colder months and lower levels in summer.
+By looking at the monthly averages since 1990 I found that December has the highest natural gas production at around 17.1 billion cubic meters, while June has the lowest at around 14.9 billion. This suggests that gas production follows a seasonal pattern with higher levels during the colder months and lower levels in summer
 
 ### 2.6d 
 
@@ -39,7 +39,7 @@ I used `sum()` instead of `mean()` because I wanted to calculate the total gas p
 
 ### 2.7b 
 
-Looking at the graph, I can see that the non-seasonally adjusted series has regular spikes and drops that repeat every year, especially around the holiday season. The seasonally adjusted series is much smoother because these seasonal changes have been removed. However, both lines follow almost the same long-term trend and show similar larger changes (including the drops) and this tells us that seasonal adjustment mainly removes the repeating yearly patterns without changing the overall direction of retail sales.
+Looking at the graph, I can see that the non-seasonally adjusted series has regular spikes and drops that repeat every year, especially around the holiday season. The seasonally adjusted series is much smoother because these seasonal changes have been removed. However, both lines follow almost the same long-term trend and show similar larger changes (including the drops) and this tells us that seasonal adjustment mainly removes the repeating yearly patterns without changing the overall direction of retail sales
 
 ### 2.7d 
 
@@ -49,20 +49,65 @@ Here I added a blue smooth trend line using `geom_smooth()` because it makes it 
 
 ### 3.1a 
 
-In the graph I noticed that the seasonal ups and downs generally become larger as gas production increases, especially during the 1970s and 1980s., but this doesn't happen throughout the entire period. Towards the end, production keeps increasing, but the seasonal changes don't grow as much as before.
+In the graph I noticed that the seasonal ups and downs generally become larger as gas production increases, especially during the 1970s and 1980s., but this doesn't happen throughout the entire period. Towards the end, production keeps increasing, but the seasonal changes don't grow as much as before
 
 ### 3.1b 
 
-After taking the log of gas production, I see that the trend becomes flatter and the seasonal ups and downs look more balanced, especially when production is higher. However, seasonal changes are still visible and their size is not completely constant over time. I think using logs is helpful because it makes the changes easier to compare, even though it doesn't completely remove the differences in seasonal fluctuations.
+After taking the log of gas production, I see that the trend becomes flatter and the seasonal ups and downs look more balanced, especially when production is higher. However, seasonal changes are still visible and their size is not completely constant over time. I think using logs is helpful because it makes the changes easier to compare, even though it doesn't completely remove the differences in seasonal fluctuations
 
 ### 3.1c
 
-By looking at the two graphs we know that retail sales keep increasing over time, and the seasonal ups and downs become larger as sales grow. After taking the log, the trend looks more linear and the seasonal changes become more balanced. Here I think using logs makes even more sense for retail sales than for Canadian gas production because the seasonal fluctuations seem to grow more consistently with the level of sales.
+By looking at the two graphs we know that retail sales keep increasing over time, and the seasonal ups and downs become larger as sales grow. After taking the log, the trend looks more linear and the seasonal changes become more balanced. Here I think using logs makes even more sense for retail sales than for Canadian gas production because the seasonal fluctuations seem to grow more consistently with the level of sales
 
 ### 3.2a 
 
-The difference between the two methods is usually very small and close to zero. There are some larger spikes, especially in the earlier years, but overall I think the log difference is a good approximation of the actual growth rate, particularly when monthly changes are small.
+The difference between the two methods is usually very small and close to zero. There are some larger spikes, especially in the earlier years, but overall I think the log difference is a good approximation of the actual growth rate, particularly when monthly changes are small
 
 ### 3.3 
 
 The non-seasonally adjusted series has much larger monthly changes, while the adjusted series stays closer to zero most of the time. This happens because seasonal adjustment removes regular changes in spending throughout the year, such as holiday shopping. As I also pointed out earlier in Part 2.7b, removing these patterns makes the data smoother and helps me see the actual changes in retail sales more clearly.
+
+### Seasonality
+
+### 4.1b 
+
+The difference between the two series is pretty clear: In the non-seasonally adjusted data, sales tend to increase in December and drop again at the beginning of the year. After seasonal adjustment, these repeating changes mostly disappear and the lines become much flatter, and this helps me see the changes in sales without the usual seasonal effects
+
+### 4.1c
+
+Canadian gas production follows a fairly clear seasonal pattern, with higher levels in December and January and lower levels during the summer, especially around June and July. This makes sense to me because Canada has very cold winters, when people use more natural gas for heating. Even though production changes over the years, this seasonal pattern is still noticeable
+
+### 4.3a 
+
+December seems to have the strongest seasonal effect, with sales reaching around 10–20% above the trend, probably because of holiday shopping. I also noticed that the seasonal swings were larger in the earlier years and became smaller over time. This suggests that seasonal patterns in retail spending have changed somewhat over the years.
+
+### 4.3b 
+
+My seasonal adjustment is very close to the official Census Bureau data for most of the period, with differences usually staying near zero. However, the differences become larger after 2020, sometimes reaching almost 2%. I think this happens because I used the default X-13 settings, while the Census Bureau uses more specific adjustments to account for holidays, unusual events, and other factors
+
+### 4.4a 
+
+The model estimates that Canadian gas production grows by about 0.397% per month on average. June has the strongest seasonal effect, with a t-statistic of -4.777. Its negative coefficient means that gas production tends to be lower in June compared to January, even after accounting for the overall trend. This makes sense because gas production is generally higher during the colder months
+
+```{r}
+library(fpp3)
+
+can_gas_report <- canadian_gas |>
+  mutate(log_volume = log(Volume))
+
+can_gas_fit <- can_gas_report |>
+  model(TSLM(log_volume ~ trend() + season()))
+
+can_gas_fit |>
+  tidy() |>
+  select(term, estimate, std.error, statistic, p.value) |>
+  knitr::kable(digits = 3)
+```
+
+### 4.4b 
+
+The model follows the overall upward trend and seasonal changes fairly well, especially around the 1990s. However, it doesn't fully capture the rapid increase in production during the 1960s and tends to overestimate production toward the end of the period
+
+### 4.4c 
+
+The residuals still show a clear pattern over time and the ACF remains high across many months, so they don't look like white noise and the Ljung–Box test confirms this, with a p-value extremely close to zero (below 0.05) . This means I can reject the null hypothesis of no autocorrelation and conclude that the model is still missing some important patterns in the data
